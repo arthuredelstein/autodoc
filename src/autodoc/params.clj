@@ -33,6 +33,8 @@
       [:page-title nil "A title to put on each page"],
       [:copyright "No copyright info " "Copyright (or other page footer data) to put at the bottom of each page"]
       [:commit? false "Commit and push the documentation when complete, if doc dir is a git repo"]
+      
+      [:safe-mode? false]
       ])
 
 (def param-set (set (for [[kw _ _] available-params] kw)))

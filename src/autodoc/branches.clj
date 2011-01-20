@@ -58,13 +58,14 @@
                     (expand-classpath branch-name (params :root) (params :load-classpath))
                     (expand-jar-path (params :load-jar-dirs)))
         tmp-file (File/createTempFile "collect-" ".clj")]
-    (exec-clojure class-path 
+    (when-not (:safe-mode? params)
+      (exec-clojure class-path 
                   (cl-format 
                    nil 
                    "(use 'autodoc.collect-info) (collect-info-to-file \"~a\" \"~a\" \"~a\")"
                    (params :param-dir)
                    (.getAbsolutePath tmp-file)
-                   branch-name))
+                   branch-name)))
     (try 
      (with-open [f (java.io.PushbackReader. (reader tmp-file))] 
        (binding [*in* f] (read)))
@@ -99,7 +100,7 @@
     (doseq [branch-info branch-spec]
       (binding [params (merge params (:params branch-info))]
         (when (:name branch-info) (switch-branches (:name branch-info)))
-        (do-build (params :param-dir) (:name branch-info))
+        (when-not (:safe-mode? params) (do-build (params :param-dir) (:name branch-info)))
         (xform-tree (str (params :root) "/doc")
                     (str (params :output-path) "/"
                          (when-not (:first? branch-info)

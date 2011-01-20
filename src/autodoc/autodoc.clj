@@ -17,7 +17,7 @@
 (defn build-html 
   "Build the documentation (default command)"
   [& _]
-  (load-namespaces)
+  (when-not (:safe-mode? params) (load-namespaces))
   (make-doc-dir)
   (copy-statics)
   (make-all-pages))
